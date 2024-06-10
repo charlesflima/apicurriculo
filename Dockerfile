@@ -10,6 +10,9 @@ RUN apt-get install maven -y
 # Copia todos os arquivos do projeto para o contêiner
 COPY . .
 
+# Dá permissão de execução ao Maven Wrapper
+RUN chmod +x ./mvnw
+
 # Usa o Maven Wrapper para compilar o projeto e gerar o JAR, ignorando os testes
 RUN ./mvnw package -DskipTests
 
