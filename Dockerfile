@@ -1,11 +1,8 @@
-# Etapa de construção
-FROM ubuntu:latest AS build
+# Usa a imagem base do OpenJDK para Java 22
+FROM adoptopenjdk:22-jdk-hotspot AS build
 
-# Atualiza a lista de pacotes e instala o OpenJDK 22
-RUN apt-get update && apt-get install openjdk-22-jdk -y
-
-# Instala Maven
-RUN apt-get install maven -y
+# Define o diretório de trabalho dentro do contêiner
+WORKDIR /app
 
 # Copia todos os arquivos do projeto para o contêiner
 COPY . .
@@ -16,17 +13,17 @@ RUN chmod +x ./mvnw
 # Usa o Maven Wrapper para compilar o projeto e gerar o JAR, ignorando os testes
 RUN ./mvnw package -DskipTests
 
-# Etapa de execução
-FROM openjdk:22-jdk-slim
+# Usa uma imagem base mais leve para a execução
+FROM adoptopenjdk:17-jre-hotspot-slim
 
-# Define o diretório de trabalho dentro do contêiner
+# Define o diretório de trabalho dentro do contêiner de execução
 WORKDIR /app
+
+# Copia o JAR gerado na etapa de construção para o contêiner de execução
+COPY --from=build /app/target/curriculo-api-0.0.1-SNAPSHOT.jar /app/app.jar
 
 # Expõe a porta 8080
 EXPOSE 8080
 
-# Copia o JAR gerado na etapa de construção para o contêiner de execução
-COPY --from=build /target/curriculo-api-0.0.1-SNAPSHOT.jar /app/app.jar
-
 # Comando a ser executado quando o contêiner for iniciado
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+CMD ["java", "-jar", "app.jar"]
