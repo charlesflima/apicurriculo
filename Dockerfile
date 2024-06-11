@@ -1,5 +1,5 @@
-# Usa uma imagem base para a construção
-FROM openjdk:17-jdk-slim AS build
+# Usa a imagem base do OpenJDK para Java 22
+FROM bardiir/jdk22-ant AS build
 
 # Define o diretório de trabalho dentro do contêiner
 WORKDIR /app
@@ -13,7 +13,7 @@ RUN chmod +x ./mvnw
 # Usa o Maven Wrapper para compilar o projeto e gerar o JAR, ignorando os testes
 RUN ./mvnw package -DskipTests
 
-# Usa uma imagem base para a execução
+# Usa uma imagem base mais leve para a execução
 FROM openjdk:17-jre-slim
 
 # Define o diretório de trabalho dentro do contêiner de execução
