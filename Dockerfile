@@ -14,7 +14,7 @@ RUN chmod +x ./mvnw
 RUN ./mvnw package -DskipTests
 
 # Usa uma imagem base mais leve para a execução
-FROM adoptopenjdk:17-jre-hotspot-slim
+FROM openjdk:17-jre-slim
 
 # Define o diretório de trabalho dentro do contêiner de execução
 WORKDIR /app
